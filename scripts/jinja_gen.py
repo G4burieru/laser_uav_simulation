@@ -29,6 +29,11 @@ parser.add_argument('--enable_garmin', action='store_true')
 parser.add_argument('--enable_livox', action='store_true')
 parser.add_argument('--enable_livox_45', action='store_true')
 parser.add_argument('--enable_livox_down', action='store_true')
+# mount of the 'livox_up' lidar (defaults: upright on top, as on the real drone)
+parser.add_argument('--livox_roll_deg', type=float, default=0.0)
+parser.add_argument('--livox_pitch_deg', type=float, default=0.0)
+parser.add_argument('--livox_z', type=float, default=0.1)
+parser.add_argument('--livox_downsample', type=int, default=5)
 parser.add_argument('--x', type=float, default=0.0)
 parser.add_argument('--y', type=float, default=0.0)
 parser.add_argument('--z', type=float, default=0.0)
@@ -71,6 +76,10 @@ data = {
     'enable_garmin': args.enable_garmin,
     'enable_livox_45': args.enable_livox_45,
     'enable_livox_down': args.enable_livox_down,
+    'livox_roll': float(args.livox_roll_deg) * 3.141592653589793 / 180.0,
+    'livox_pitch': float(args.livox_pitch_deg) * 3.141592653589793 / 180.0,
+    'livox_z': float(args.livox_z),
+    'livox_downsample': int(args.livox_downsample),
     'x_offset': -float(args.x),
     'y_offset': -float(args.y),
     'z_offset': -float(args.z),

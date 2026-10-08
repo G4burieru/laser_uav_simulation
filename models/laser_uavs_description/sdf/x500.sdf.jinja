@@ -8,7 +8,7 @@
   {# ================================================================== #}
 
   {# Robot parameters and arguments {--> #}
-  {%- set mass = 2.0 -%} {# [kg] #}
+  {%- set mass = 2.5 -%} {# [kg] (article drone mass; was 2.0) #}
   {%- set body_radius = 0.1 -%} {# [m] #}
   {%- set body_height = 0.1 -%} {# [m] #}
   {%- set mass_prop = 0.005 -%} {# [kg] #}
@@ -760,11 +760,12 @@
       max_range = 40,
       x = 0.0,
       y = 0.0,
-      z = 0.1,
-      roll = 0,
-      pitch = 0,
+      z = livox_z | default(0.1),
+      roll = livox_roll | default(0),
+      pitch = livox_pitch | default(0),
       yaw = 0,
-      lasers = 20)
+      lasers = 20,
+      downsample = livox_downsample | default(5))
     }} 
 
     {{ components.imu_sensor_macro(
@@ -977,17 +978,18 @@
     {# ========================== research itens ======================== #}
 
     {# load_pendulum {--> #}
+    {# cable: 10 x 0.0975 m + 0.025 m (half load box) = 1.0 m from the attach point to the load centre #}
     {% if enable_load_pendulum %}
     {{ components.load_pendulum(
       name='load_attacher',
       parent_link='base_link',
       attach_linker_pose='0 0 -0.01 0 0 0',
       attach_linker_mass=0.01,
-      rope_num_segments=20,
-      rope_segment_length=0.03,
+      rope_num_segments=10,
+      rope_segment_length=0.0975,
       rope_segment_radius=0.002,
-      rope_segment_mass=0.001,
-      load_mass=0.3)
+      rope_segment_mass=0.002,
+      load_mass=0.75)
     }}
     {% endif %}
     {# <!--}--> #}
