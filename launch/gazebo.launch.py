@@ -6,6 +6,7 @@ import launch
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.actions import OpaqueFunction
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
@@ -83,7 +84,8 @@ def launch_setup(context: launch.LaunchContext, ld):
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 FindPackageShare('gazebo_ros'), '/launch/gzclient.launch.py'
-            ])
+            ]),
+            condition=IfCondition(LaunchConfiguration('gui'))
         )
     )
 
@@ -99,6 +101,16 @@ def generate_launch_description():
         'world',
         default_value='custom_empty',
         description='Name of the world file.'
+    ))
+
+    # #}
+
+    # #{ gui
+
+    ld.add_action(DeclareLaunchArgument(
+        'gui',
+        default_value='true',
+        description='Start the Gazebo client (graphical interface); false runs only the server.'
     ))
 
     # #}
