@@ -758,7 +758,7 @@
       rot_freq = 10,
       noise = 0.01,
       max_range = 40,
-      x = 0.0,
+      x = livox_x | default(0.0),
       y = 0.0,
       z = livox_z | default(0.1),
       roll = livox_roll | default(0),
@@ -978,7 +978,7 @@
     {# ========================== research itens ======================== #}
 
     {# load_pendulum {--> #}
-    {# cable: 10 x 0.0975 m + 0.025 m (half load box) = 1.0 m from the attach point to the load centre #}
+    {# cable: 10 x 0.1 m = 1.0 m from the attach point to the load centre (joint at the centre of the load, turning only about the cable) #}
     {% if enable_load_pendulum %}
     {{ components.load_pendulum(
       name='load_attacher',
@@ -986,10 +986,10 @@
       attach_linker_pose='0 0 -0.01 0 0 0',
       attach_linker_mass=0.01,
       rope_num_segments=10,
-      rope_segment_length=0.0975,
+      rope_segment_length=0.1,
       rope_segment_radius=0.002,
       rope_segment_mass=0.002,
-      load_mass=0.75)
+      load_mass=0.5)
     }}
     {% endif %}
     {# <!--}--> #}

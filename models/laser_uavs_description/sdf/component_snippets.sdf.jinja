@@ -1344,13 +1344,16 @@
   <!-- rope {-->
   {#- Links are laid out along the cable (segment i starts (i-1)*L from the attach point) and
       every joint is anchored at its child origin, so each segment adds exactly L to the cable;
-      the load centre ends rope_num_segments * rope_segment_length + 0.025 m from the attach point.
+      the load centre ends rope_num_segments * rope_segment_length from the attach point: the load joint is at the
+      load centre, so the centre of mass is the end of the cable whatever the orientation of the box (the point-mass
+      pendulum of the planner and of the estimator). The load is a cube of load_size, its bounding sphere the
+      planner's r_load (0.12 m, the SALT payload case with the Livox: 0.104 m).
       The cable spawns stretched horizontally behind the drone (-x, segment -z axis pitched to -x)
       so the load does not start below the ground; it falls to the floor and is lifted on takeoff.
       Joint links get the segment mass and the damping is implicit: tiny inertias with explicit
       damping make ODE diverge, and very light links let the cable stretch under the load. -#}
   {%- set joint_damping = 0.005 -%}
-  {%- set load_half_size = 0.025 -%}
+  {%- set load_size = 0.12 -%}
   {%- set cable_pitch = 1.5707963267948966 -%}
   {%- for i in range(1, rope_num_segments + 1) -%}
 
@@ -1412,27 +1415,31 @@
 
   <!-- load {-->
   <link name="load_link">
-    <pose>{{ -rope_num_segments * rope_segment_length - load_half_size }} 0 0 0 {{ cable_pitch }} 0</pose>
+    <pose>{{ -rope_num_segments * rope_segment_length }} 0 0 0 {{ cable_pitch }} 0</pose>
     <inertial>
       <mass>{{ load_mass }}</mass>
       <inertia>
-        <ixx>0.0000417</ixx><ixy>0</ixy><ixz>0</ixz>
-        <iyy>0.0000417</iyy><iyz>0</iyz><izz>0.0000417</izz>
+        <ixx>{{ load_mass * load_size * load_size / 6.0 }}</ixx><ixy>0</ixy><ixz>0</ixz>
+        <iyy>{{ load_mass * load_size * load_size / 6.0 }}</iyy><iyz>0</iyz><izz>{{ load_mass * load_size * load_size / 6.0 }}</izz>
       </inertia>
     </inertial>
     <visual name="load_visual">
-      <geometry><box><size>0.05 0.05 0.05</size></box></geometry>
+      <geometry><box><size>{{ load_size }} {{ load_size }} {{ load_size }}</size></box></geometry>
       <material><script><name>Gazebo/Blue</name></script></material>
     </visual>
     <collision name="load_collision">
-      <geometry><box><size>0.05 0.05 0.05</size></box></geometry>
+      <geometry><box><size>{{ load_size }} {{ load_size }} {{ load_size }}</size></box></geometry>
     </collision>
   </link>
 
-  <joint name="load_joint" type="ball">
+  {#- the box hangs fixed to the cable along its z axis: it follows the direction of the last segment and only turns
+      about the cable (a ball joint at the centre of mass has no restoring torque, so the box tumbled freely) -#}
+  <joint name="load_joint" type="revolute">
     <parent>stretch_rope_link_{{ rope_num_segments }}</parent>
     <child>load_link</child>
-    <pose>0 0 {{ load_half_size }} 0 0 0</pose>
+    <pose>0 0 0 0 0 0</pose>
+    <axis><xyz>0 0 1</xyz><dynamics><damping>{{ joint_damping }}</damping></dynamics></axis>
+    <physics><ode><implicit_spring_damper>true</implicit_spring_damper></ode></physics>
   </joint>
   <!--}-->
 {%- endmacro -%}
