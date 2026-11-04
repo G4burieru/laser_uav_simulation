@@ -35,6 +35,7 @@ parser.add_argument('--livox_pitch_deg', type=float, default=0.0)
 parser.add_argument('--livox_x', type=float, default=0.0)
 parser.add_argument('--livox_z', type=float, default=0.1)
 parser.add_argument('--livox_downsample', type=int, default=5)
+parser.add_argument('--livox_no_return', action='store_true')  # rays without a return published at the max range
 parser.add_argument('--x', type=float, default=0.0)
 parser.add_argument('--y', type=float, default=0.0)
 parser.add_argument('--z', type=float, default=0.0)
@@ -82,6 +83,7 @@ data = {
     'livox_x': float(args.livox_x),
     'livox_z': float(args.livox_z),
     'livox_downsample': int(args.livox_downsample),
+    'livox_no_return': args.livox_no_return,
     'x_offset': -float(args.x),
     'y_offset': -float(args.y),
     'z_offset': -float(args.z),

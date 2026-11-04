@@ -765,7 +765,8 @@
       pitch = livox_pitch | default(0),
       yaw = 0,
       lasers = 20,
-      downsample = livox_downsample | default(5))
+      downsample = livox_downsample | default(5),
+      no_return_points = livox_no_return | default(false))
     }} 
 
     {{ components.imu_sensor_macro(

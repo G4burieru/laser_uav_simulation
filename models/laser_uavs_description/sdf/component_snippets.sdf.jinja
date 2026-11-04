@@ -873,7 +873,7 @@
 {# ========================== lidar sensors ========================= #}   
 
 {# livox_lidar_macro {--> #}
-{%- macro livox_lidar_macro(namespace, parent_link, sensor_name, rot_freq, lasers, max_range, noise, x, y, z, roll, pitch, yaw, downsample=30) -%}
+{%- macro livox_lidar_macro(namespace, parent_link, sensor_name, rot_freq, lasers, max_range, noise, x, y, z, roll, pitch, yaw, downsample=30, no_return_points=false) -%}
 {# -- frame names -- #}
 {%- set frame_fcu = "fcu" -%}
 {%- set frame_sensor = sensor_name + "_sensor" -%}
@@ -952,6 +952,7 @@
       <visualize>false</visualize>
       <samples>20000</samples>
       <downsample>{{ downsample }}</downsample>
+      <no_return_points>{{ 'true' if no_return_points else 'false' }}</no_return_points>
       <csv_file_name>mid360-real-centr.csv</csv_file_name>
       <publish_pointcloud_type>2</publish_pointcloud_type>
       <robot_namespace>{{ namespace }}</robot_namespace>
